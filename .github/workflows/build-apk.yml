@@ -44,6 +44,19 @@ jobs:
       - name: Buat ikon aplikasi dari logo
         run: npx @capacitor/assets generate --android --iconBackgroundColor '#000000' --splashBackgroundColor '#000000'
 
+      - name: Pasang ikon launcher langsung dari logo
+        run: |
+          R=android/app/src/main/res
+          rm -f $R/mipmap-anydpi-v26/ic_launcher*.xml
+          for d in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
+            n=${d%%:*}
+            s=${d##*:}
+            mkdir -p $R/mipmap-$n
+            convert resources/icon.png -resize ${s}x${s} $R/mipmap-$n/ic_launcher.png
+            cp $R/mipmap-$n/ic_launcher.png $R/mipmap-$n/ic_launcher_round.png
+            cp $R/mipmap-$n/ic_launcher.png $R/mipmap-$n/ic_launcher_foreground.png
+          done
+
       - name: Sinkron ulang ke Android
         run: npx cap sync android
 
