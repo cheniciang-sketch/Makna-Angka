@@ -1,0 +1,60 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Siapkan Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setujui lisensi Android SDK
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+      - name: Pasang Capacitor dan plugin
+        run: npm install
+
+      - name: Siapkan folder web
+        run: |
+          mkdir -p www
+          cp index.html www/index.html
+
+      - name: Buat project Android
+        run: |
+          npx cap add android
+          npx cap sync android
+
+      - name: Buat ikon aplikasi dari logo
+        run: npx @capacitor/assets generate --android --iconBackgroundColor '#000000' --splashBackgroundColor '#000000'
+
+      - name: Sinkron ulang ke Android
+        run: npx cap sync android
+
+      - name: Build APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Unggah APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: makna-angka-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
