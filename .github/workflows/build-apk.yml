@@ -39,15 +39,25 @@ jobs:
           mkdir -p www
           cp index.html www/index.html
 
+      - name: Ambil logo dari index.html
+        run: |
+          python3 -c "
+          import re, base64
+          s = open('index.html', encoding='utf-8').read()
+          m = re.search(r'data:image/png;base64,([A-Za-z0-9+/=]+)', s)
+          open('logo.png', 'wb').write(base64.b64decode(m.group(1)))
+          print('logo diambil')
+          "
+
+      - name: Buat ikon 1024x1024 dari logo
+        run: convert logo.png -background black -flatten -resize 820x820 -gravity center -extent 1024x1024 icon.png
+
       - name: Buat project Android
         run: |
           npx cap add android
           npx cap sync android
 
-      - name: Buat ikon aplikasi dari logo
-        run: npx @capacitor/assets generate --android --iconBackgroundColor '#000000' --splashBackgroundColor '#000000'
-
-      - name: Pasang ikon launcher langsung dari logo
+      - name: Pasang ikon launcher
         run: |
           R=android/app/src/main/res
           rm -f $R/mipmap-anydpi-v26/ic_launcher*.xml
@@ -55,7 +65,7 @@ jobs:
             n=${d%%:*}
             s=${d##*:}
             mkdir -p $R/mipmap-$n
-            convert resources/icon.png -resize ${s}x${s} $R/mipmap-$n/ic_launcher.png
+            convert icon.png -resize ${s}x${s} $R/mipmap-$n/ic_launcher.png
             cp $R/mipmap-$n/ic_launcher.png $R/mipmap-$n/ic_launcher_round.png
             cp $R/mipmap-$n/ic_launcher.png $R/mipmap-$n/ic_launcher_foreground.png
           done
