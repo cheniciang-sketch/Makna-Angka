@@ -4767,6 +4767,13 @@ html.theme-light .ma-dl-menu button{color:#6b4a0c;border-color:rgba(184,134,43,.
   };
 })();
 </script>
+<style id="ma-print-isolate">
+@media print{
+  body.print-personal #coupleModePanel,body.print-personal #coupleResult,body.print-personal #yearlyModePanel,body.print-personal #yearlyResult,body.print-personal .ma-pdf-solution-couple,body.print-personal .ma-pdf-disclaimer-couple,body.print-personal .ma-pdf-closing-couple,body.print-personal .couple-chart-wrap,body.print-personal .couple-combined,body.print-personal .couple-analysis,body.print-personal #coupleModePanel *{display:none!important}
+  body.print-couple #personalModePanel,body.print-couple #personalModePanel *,body.print-couple #result,body.print-couple #yearlyModePanel,body.print-couple #yearlyResult,body.print-couple .ma-pdf-solution-personal,body.print-couple .ma-pdf-disclaimer-personal,body.print-couple .ma-pdf-closing-personal{display:none!important}
+  body.print-yearly #personalModePanel,body.print-yearly #result,body.print-yearly #coupleModePanel,body.print-yearly #coupleResult,body.print-yearly .ma-pdf-solution-personal,body.print-yearly .ma-pdf-disclaimer-personal,body.print-yearly .ma-pdf-closing-personal,body.print-yearly .ma-pdf-solution-couple,body.print-yearly .ma-pdf-disclaimer-couple,body.print-yearly .ma-pdf-closing-couple{display:none!important}
+}
+</style>
 </body>
 </html>
 <style id="ma-v17-personal-arti-spesial-layout">
