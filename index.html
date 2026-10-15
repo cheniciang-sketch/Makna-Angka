@@ -4739,13 +4739,31 @@ html.theme-light .ma-dl-menu button{color:#6b4a0c;border-color:rgba(184,134,43,.
 <script id="ma-native-print">
 (function(){
   var nativeWindowPrint = window.print;
+  var restoreTimer = null;
+  function lockA4Width(){
+    var w = '794px'; /* lebar A4 pada 96 dpi */
+    document.documentElement.style.width = w;
+    document.body.style.width = w;
+    document.body.style.overflow = 'visible';
+  }
+  function unlockWidth(){
+    document.documentElement.style.width = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+  }
   window.print = function(){
     var P = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.WebviewPrint;
     if(!P || !P.print){ return nativeWindowPrint.apply(window, arguments); }
     window.dispatchEvent(new Event('beforeprint'));
+    lockA4Width();
+    if(restoreTimer) clearTimeout(restoreTimer);
     P.print({ name: document.title || 'Makna Angka' })
       .catch(function(e){ console.error('Print gagal', e); })
-      .then(function(){ window.dispatchEvent(new Event('afterprint')); });
+      .then(function(){
+        window.dispatchEvent(new Event('afterprint'));
+        /* tahan lebar A4 sebentar agar halaman sempat terbaca printer, lalu kembalikan */
+        restoreTimer = setTimeout(unlockWidth, 20000);
+      });
   };
 })();
 </script>
